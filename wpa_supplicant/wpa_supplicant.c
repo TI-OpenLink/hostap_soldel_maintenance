@@ -385,6 +385,8 @@ static void wpa_supplicant_cleanup(struct wpa_supplicant *wpa_s)
 		wpa_s->l2_br = NULL;
 	}
 
+/* This has been moved to wpa_supplicant_deinit_iface to avoid a race with hostapd */
+#ifndef ANDROID
 	if (wpa_s->ctrl_iface) {
 		wpa_supplicant_ctrl_iface_deinit(wpa_s->ctrl_iface);
 		wpa_s->ctrl_iface = NULL;
@@ -396,6 +398,7 @@ static void wpa_supplicant_cleanup(struct wpa_supplicant *wpa_s)
 		wpa_config_free(wpa_s->conf);
 		wpa_s->conf = NULL;
 	}
+#endif
 
 	os_free(wpa_s->confname);
 	wpa_s->confname = NULL;
@@ -2352,6 +2355,29 @@ static void wpa_supplicant_deinit_iface(struct wpa_supplicant *wpa_s,
 
 	if (wpa_s->drv_priv)
 		wpa_drv_deinit(wpa_s);
+
+/**
+ * The wpa_drv_deinit call after sending TERMINATING to the framework causes
+ * race condition with the start of hostapd.
+ * This has been moved out of wpa_supplicant_cleanup(). Send the control
+ * message and free config after the deinit.
+ */
+#ifdef ANDROID
+	wpa_msg(wpa_s, MSG_INFO, WPA_EVENT_TERMINATING);
+
+	if (wpa_s->ctrl_iface) {
+		wpa_supplicant_ctrl_iface_deinit(wpa_s->ctrl_iface);
+		wpa_s->ctrl_iface = NULL;
+	}
+
+	if (wpa_s->conf != NULL) {
+		struct wpa_ssid *ssid;
+		for (ssid = wpa_s->conf->ssid; ssid; ssid = ssid->next)
+			wpas_notify_network_removed(wpa_s, ssid);
+		wpa_config_free(wpa_s->conf);
+		wpa_s->conf = NULL;
+	}
+#endif
 }
 
 
