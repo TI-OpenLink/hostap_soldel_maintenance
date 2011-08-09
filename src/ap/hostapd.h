@@ -118,6 +118,7 @@ struct hostapd_data {
 	struct l2_packet_data *l2;
 	struct wps_context *wps;
 
+	int beacon_set_done;
 	struct wpabuf *wps_beacon_ie;
 	struct wpabuf *wps_probe_resp_ie;
 
