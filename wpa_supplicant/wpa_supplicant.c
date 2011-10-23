@@ -368,6 +368,22 @@ void wpa_supplicant_set_non_wpa_policy(struct wpa_supplicant *wpa_s,
 }
 
 
+static void free_hw_features(struct wpa_supplicant *wpa_s)
+{
+	int i;
+	if (wpa_s->hw.modes == NULL)
+		return;
+
+	for (i = 0; i < wpa_s->hw.num_modes; i++) {
+		os_free(wpa_s->hw.modes[i].channels);
+		os_free(wpa_s->hw.modes[i].rates);
+	}
+
+	os_free(wpa_s->hw.modes);
+	wpa_s->hw.modes = NULL;
+}
+
+
 static void wpa_supplicant_cleanup(struct wpa_supplicant *wpa_s)
 {
 	bgscan_deinit(wpa_s);
@@ -435,6 +451,8 @@ static void wpa_supplicant_cleanup(struct wpa_supplicant *wpa_s)
 
 	os_free(wpa_s->next_scan_freqs);
 	wpa_s->next_scan_freqs = NULL;
+
+	free_hw_features(wpa_s);
 }
 
 
@@ -2274,6 +2292,10 @@ next_driver:
 		return -1;
 	}
 
+	wpa_s->hw.modes = wpa_drv_get_hw_feature_data(wpa_s,
+						      &wpa_s->hw.num_modes,
+						      &wpa_s->hw.flags);
+
 	if (wpa_drv_get_capa(wpa_s, &capa) == 0) {
 		wpa_s->drv_flags = capa.flags;
 		if (capa.flags & WPA_DRIVER_FLAGS_USER_SPACE_MLME) {
@@ -2765,23 +2787,6 @@ void wpa_supplicant_update_config(struct wpa_supplicant *wpa_s)
 #endif /* CONFIG_P2P */
 
 	wpa_s->conf->changed_parameters = 0;
-}
-
-
-void ieee80211_sta_free_hw_features(struct hostapd_hw_modes *hw_features,
-				    size_t num_hw_features)
-{
-	size_t i;
-
-	if (hw_features == NULL)
-		return;
-
-	for (i = 0; i < num_hw_features; i++) {
-		os_free(hw_features[i].channels);
-		os_free(hw_features[i].rates);
-	}
-
-	os_free(hw_features);
 }
 
 

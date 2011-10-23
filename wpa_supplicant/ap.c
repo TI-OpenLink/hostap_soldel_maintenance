@@ -56,10 +56,6 @@ static int wpa_supplicant_conf_ap(struct wpa_supplicant *wpa_s,
 {
 	struct hostapd_bss_config *bss = &conf->bss[0];
 	int pairwise;
-#ifdef CONFIG_IEEE80211N
-	struct hostapd_hw_modes *modes;
-	u16 num_modes, flags;
-#endif /* CONFIG_IEEE80211N */
 
 	conf->driver = wpa_s->driver;
 
@@ -92,13 +88,12 @@ static int wpa_supplicant_conf_ap(struct wpa_supplicant *wpa_s,
 	 * Using default config settings for: conf->ht_op_mode_fixed,
 	 * conf->secondary_channel, conf->require_ht
 	 */
-	modes = wpa_drv_get_hw_feature_data(wpa_s, &num_modes, &flags);
-	if (modes) {
+	if (wpa_s->hw.modes) {
 		struct hostapd_hw_modes *mode = NULL;
 		int i;
-		for (i = 0; i < num_modes; i++) {
-			if (modes[i].mode == conf->hw_mode) {
-				mode = &modes[i];
+		for (i = 0; i < wpa_s->hw.num_modes; i++) {
+			if (wpa_s->hw.modes[i].mode == conf->hw_mode) {
+				mode = &wpa_s->hw.modes[i];
 				break;
 			}
 		}
@@ -119,8 +114,6 @@ static int wpa_supplicant_conf_ap(struct wpa_supplicant *wpa_s,
 			HT_CAP_INFO_RX_STBC_MASK |
 			HT_CAP_INFO_MAX_AMSDU_SIZE);
 		}
-		ieee80211_sta_free_hw_features(modes, num_modes);
-		modes = NULL;
 	}
 #endif /* CONFIG_IEEE80211N */
 
