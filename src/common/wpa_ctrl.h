@@ -104,10 +104,8 @@ extern "C" {
 /** P2P device found */
 #define P2P_EVENT_DEVICE_FOUND "P2P-DEVICE-FOUND "
 
-#ifdef ANDROID_BRCM_P2P_PATCH
 /** P2P device lost */
 #define P2P_EVENT_DEVICE_LOST "P2P-DEVICE-LOST "
-#endif
 
 /** A P2P device requested GO negotiation, but we were not ready to start the
  * negotiation */

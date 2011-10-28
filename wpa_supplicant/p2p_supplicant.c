@@ -1243,10 +1243,10 @@ void wpas_dev_found(void *ctx, const u8 *addr,
 static void wpas_dev_lost(void *ctx, const u8 *dev_addr)
 {
 	struct wpa_supplicant *wpa_s = ctx;
-#ifdef ANDROID_BRCM_P2P_PATCH
+
 	wpa_msg(wpa_s, MSG_INFO, P2P_EVENT_DEVICE_LOST
 		"p2p_dev_addr=" MACSTR, MAC2STR(dev_addr));
-#endif
+
 	wpas_notify_p2p_device_lost(wpa_s, dev_addr);
 }
 
