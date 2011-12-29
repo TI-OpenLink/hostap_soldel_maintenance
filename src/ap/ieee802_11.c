@@ -871,6 +871,37 @@ static void send_deauth(struct hostapd_data *hapd, const u8 *addr,
 			   strerror(errno));
 }
 
+static void add_pre_assoc_sta(struct hostapd_data *hapd, struct sta_info *sta)
+{
+	struct ieee80211_ht_capabilities ht_cap;
+	/*
+	 * Remove the STA entry in order to make sure the STA PS state gets
+	 * cleared and configuration gets updated in case of reassociation back
+	 * to the same AP.
+	 */
+	hostapd_drv_sta_remove(hapd, sta->addr);
+
+#ifdef CONFIG_IEEE80211N
+	if (sta->flags & WLAN_STA_HT)
+		hostapd_get_ht_capab(hapd, sta->ht_capabilities, &ht_cap);
+#endif /* CONFIG_IEEE80211N */
+
+	if (hostapd_sta_add(hapd, sta->addr, sta->aid, sta->capability,
+			    sta->supported_rates, sta->supported_rates_len,
+			    sta->listen_interval,
+			    sta->flags & WLAN_STA_HT ? &ht_cap : NULL,
+			    sta->flags, sta->uapsd_queues, sta->max_sp)) {
+		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE80211,
+			       HOSTAPD_LEVEL_NOTICE,
+			       "Could not add STA to kernel driver");
+
+		ap_sta_disconnect(hapd, sta, sta->addr,
+				  WLAN_REASON_DISASSOC_AP_BUSY);
+
+		return;
+	}
+}
+
 
 static void send_assoc_resp(struct hostapd_data *hapd, struct sta_info *sta,
 			    u16 status_code, int reassoc, const u8 *ies,
@@ -970,6 +1001,11 @@ static void send_assoc_resp(struct hostapd_data *hapd, struct sta_info *sta,
 		}
 	}
 #endif /* CONFIG_P2P */
+
+	if (status_code == WLAN_STATUS_SUCCESS) {
+		wpa_printf(MSG_DEBUG, "Adding associated sta");
+		add_pre_assoc_sta(hapd, sta);
+	}
 
 #ifdef CONFIG_P2P_MANAGER
 	if (hapd->conf->p2p & P2P_MANAGE)
@@ -1661,14 +1697,6 @@ static void handle_assoc_cb(struct hostapd_data *hapd,
 	u16 status;
 	struct sta_info *sta;
 	int new_assoc = 1;
-	struct ieee80211_ht_capabilities ht_cap;
-
-	if (!ok) {
-		hostapd_logger(hapd, mgmt->da, HOSTAPD_MODULE_IEEE80211,
-			       HOSTAPD_LEVEL_DEBUG,
-			       "did not acknowledge association response");
-		return;
-	}
 
 	if (len < IEEE80211_HDRLEN + (reassoc ? sizeof(mgmt->u.reassoc_resp) :
 				      sizeof(mgmt->u.assoc_resp))) {
@@ -1677,15 +1705,24 @@ static void handle_assoc_cb(struct hostapd_data *hapd,
 		return;
 	}
 
+	sta = ap_get_sta(hapd, mgmt->da);
+	if (!sta) {
+		printf("handle_assoc_cb: STA " MACSTR " not found\n",
+		       MAC2STR(mgmt->da));
+		return;
+	}
+
 	if (reassoc)
 		status = le_to_host16(mgmt->u.reassoc_resp.status_code);
 	else
 		status = le_to_host16(mgmt->u.assoc_resp.status_code);
 
-	sta = ap_get_sta(hapd, mgmt->da);
-	if (!sta) {
-		printf("handle_assoc_cb: STA " MACSTR " not found\n",
-		       MAC2STR(mgmt->da));
+	if (!ok) {
+		hostapd_logger(hapd, mgmt->da, HOSTAPD_MODULE_IEEE80211,
+			       HOSTAPD_LEVEL_DEBUG,
+			       "did not acknowledge association response");
+		if (status == WLAN_STATUS_SUCCESS)
+			hostapd_drv_sta_remove(hapd, sta->addr);
 		return;
 	}
 
@@ -1729,28 +1766,6 @@ static void handle_assoc_cb(struct hostapd_data *hapd,
 #ifdef CONFIG_IEEE80211W
 	sta->sa_query_timed_out = 0;
 #endif /* CONFIG_IEEE80211W */
-
-	/*
-	 * Remove the STA entry in order to make sure the STA PS state gets
-	 * cleared and configuration gets updated in case of reassociation back
-	 * to the same AP.
-	 */
-	hostapd_drv_sta_remove(hapd, sta->addr);
-
-#ifdef CONFIG_IEEE80211N
-	if (sta->flags & WLAN_STA_HT)
-		hostapd_get_ht_capab(hapd, sta->ht_capabilities, &ht_cap);
-#endif /* CONFIG_IEEE80211N */
-
-	if (hostapd_sta_add(hapd, sta->addr, sta->aid, sta->capability,
-			    sta->supported_rates, sta->supported_rates_len,
-			    sta->listen_interval,
-			    sta->flags & WLAN_STA_HT ? &ht_cap : NULL,
-			    sta->flags, sta->uapsd_queues, sta->max_sp)) {
-		hostapd_logger(hapd, sta->addr, HOSTAPD_MODULE_IEEE80211,
-			       HOSTAPD_LEVEL_NOTICE,
-			       "Could not add STA to kernel driver");
-	}
 
 	if (sta->flags & WLAN_STA_WDS)
 		hostapd_set_wds_sta(hapd, sta->addr, sta->aid, 1);
