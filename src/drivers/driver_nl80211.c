@@ -7130,6 +7130,7 @@ static int nl80211_pmkid(struct i802_bss *bss, int cmd, const u8 *bssid,
 	return -ENOBUFS;
 }
 
+#ifdef ANDROID
 
 #define MAX_PATTERN_SIZE        256
 #define MAX_MASK_SIZE           (MAX_PATTERN_SIZE/8)
@@ -7321,6 +7322,8 @@ nla_put_failure:
 	nlmsg_free(msg);
 	return ret;
 }
+
+#endif /* ANDROID */
 
 static int nl80211_add_pmkid(void *priv, const u8 *bssid, const u8 *pmkid)
 {
