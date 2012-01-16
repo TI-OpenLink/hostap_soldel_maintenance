@@ -28,6 +28,9 @@
 #define DEFAULT_BSS_EXPIRATION_AGE 180
 #define DEFAULT_BSS_EXPIRATION_SCAN_COUNT 2
 #define DEFAULT_MAX_NUM_STA 128
+#define DEFAULT_SCHED_SCAN_SHORT_INTERVAL 10
+#define DEFAULT_SCHED_SCAN_LONG_INTERVAL 30
+#define DEFAULT_SCHED_SCAN_NUM_SHORT_INTERVALS 6
 
 #include "config_ssid.h"
 #include "wps/wps.h"
@@ -426,6 +429,25 @@ struct wpa_config {
 	 * disassoc_low_ack - Disassocicate stations with massive packet loss
 	 */
 	int disassoc_low_ack;
+
+	/**
+	 * sched_scan_short_interval - Initial interval for sched scan in secs
+	 *
+	 * sched scan will start with this interval for num_short_intervals
+	 * intervals and then switch to a longer interval defined by
+	 * sched_scan_long_interval;
+	 */
+	int sched_scan_short_interval;
+
+	/**
+	 * long_sched_scan_interval - see sched_scan_short_interval
+	 */
+	int sched_scan_long_interval;
+
+	/**
+	 * sched_scan_num_short_intervals - see sched_scan_short_interval
+	 */
+	int sched_scan_num_short_intervals;
 };
 
 

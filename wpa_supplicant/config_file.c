@@ -703,6 +703,19 @@ static void wpa_config_write_global(FILE *f, struct wpa_config *config)
 		fprintf(f, "max_num_sta=%u\n", config->max_num_sta);
 	if (config->disassoc_low_ack)
 		fprintf(f, "disassoc_low_ack=%u\n", config->disassoc_low_ack);
+	if (config->sched_scan_num_short_intervals !=
+	    DEFAULT_SCHED_SCAN_NUM_SHORT_INTERVALS)
+		fprintf(f, "sched_scan_num_short_intervals=%u\n",
+			config->sched_scan_num_short_intervals);
+	if (config->sched_scan_short_interval !=
+	    DEFAULT_SCHED_SCAN_SHORT_INTERVAL)
+		fprintf(f, "sched_scan_short_interval=%u\n",
+			config->sched_scan_short_interval);
+	if (config->sched_scan_long_interval !=
+	    DEFAULT_SCHED_SCAN_LONG_INTERVAL)
+		fprintf(f, "sched_scan_long_intervals=%u\n",
+			config->sched_scan_long_interval);
+
 }
 
 #endif /* CONFIG_NO_CONFIG_WRITE */
