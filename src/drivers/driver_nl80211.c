@@ -1678,6 +1678,7 @@ struct wiphy_info_data {
 	int offchan_tx_supported;
 	int max_remain_on_chan;
 	int sched_scan_supported;
+	int sched_scan_intervals_supported;
 	int max_match_sets;
 };
 
@@ -1741,6 +1742,12 @@ static int wiphy_info_handler(struct nl_msg *msg, void *arg)
 		}
 	}
 
+	if (tb[NL80211_ATTR_FEATURE_FLAGS]) {
+		int features = nla_get_u32(tb[NL80211_ATTR_FEATURE_FLAGS]);
+		if (features & NL80211_FEATURE_SCHED_SCAN_INTERVALS)
+			info->sched_scan_intervals_supported = 1;
+	}
+
 	if (tb[NL80211_ATTR_OFFCHANNEL_TX_OK])
 		info->offchan_tx_supported = 1;
 
@@ -1802,6 +1809,8 @@ static int wpa_driver_nl80211_capa(struct wpa_driver_nl80211_data *drv)
 	drv->capa.max_scan_ssids = info.max_scan_ssids;
 	drv->capa.max_sched_scan_ssids = info.max_sched_scan_ssids;
 	drv->capa.sched_scan_supported = info.sched_scan_supported;
+	drv->capa.sched_scan_intervals_supported =
+		info.sched_scan_intervals_supported;
 	drv->capa.max_match_sets = info.max_match_sets;
 
 	if (info.ap_supported)
