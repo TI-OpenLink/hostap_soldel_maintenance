@@ -1406,7 +1406,9 @@ struct wpa_driver_ops {
 	 * sched_scan - Request the driver to initiate scheduled scan
 	 * @priv: private driver interface data
 	 * @params: Scan parameters
-	 * @interval: interval between scan cycles
+	 * @long_interval: interval between cycles after short intervals end
+	 * @short_interval: interval between initial short scan cycles
+	 * @num_short_intervals: number of interval short scan intervals
 	 *
 	 * Returns: 0 on success, -1 on failure
 	 *
@@ -1419,7 +1421,8 @@ struct wpa_driver_ops {
 	 * normal host-scheduled scans.
 	 */
 	int (*sched_scan)(void *priv, struct wpa_driver_scan_params *params,
-			  u32 interval);
+			  u32 long_interval, u32 short_interval,
+			  u8 num_short_intervals);
 
 	/**
 	 * stop_sched_scan - Request the driver to stop a scheduled scan
