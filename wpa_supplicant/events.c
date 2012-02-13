@@ -505,18 +505,7 @@ static struct wpa_ssid * wpa_scan_res_match(struct wpa_supplicant *wpa_s,
 
 	e = wpa_blacklist_get(wpa_s, bss->bssid);
 	if (e) {
-		int limit = 1;
-		if (wpa_supplicant_enabled_networks(wpa_s->conf) == 1) {
-			/*
-			 * When only a single network is enabled, we can
-			 * trigger blacklisting on the first failure. This
-			 * should not be done with multiple enabled networks to
-			 * avoid getting forced to move into a worse ESS on
-			 * single error if there are no other BSSes of the
-			 * current ESS.
-			 */
-			limit = 0;
-		}
+		int limit = 3;
 		if (e->count > limit) {
 			wpa_dbg(wpa_s, MSG_DEBUG, "   skip - blacklisted "
 				"(count=%d limit=%d)", e->count, limit);
