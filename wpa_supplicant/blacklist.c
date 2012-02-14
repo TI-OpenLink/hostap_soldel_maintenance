@@ -119,6 +119,7 @@ int wpa_blacklist_add(struct wpa_supplicant *wpa_s, const u8 *bssid)
 		return -1;
 	os_memcpy(e->bssid, bssid, ETH_ALEN);
 	e->count = 1;
+	os_get_time(&e->last_add);
 	e->next = wpa_s->blacklist;
 	wpa_s->blacklist = e;
 	wpa_printf(MSG_DEBUG, "Added BSSID " MACSTR " into blacklist",
