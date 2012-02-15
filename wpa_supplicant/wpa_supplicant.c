@@ -2850,9 +2850,9 @@ void wpas_connection_failed(struct wpa_supplicant *wpa_s, const u8 *bssid)
 	 * increasing the delay here to avoid constant scanning.
 	 */
 	count = wpa_blacklist_add(wpa_s, bssid);
-	if (count == 3 && wpa_s->current_bss) {
+	if (count == 1 && wpa_s->current_bss) {
 		/*
-		 * This is the 3nd failed attempt tp connect. If there is
+		 * This BSS was not in the blacklist before. If there is
 		 * another BSS available for the same ESS, we should try that
 		 * next. Otherwise, we may as well try this one once more
 		 * before allowing other, likely worse, ESSes to be considered.
@@ -2874,14 +2874,12 @@ void wpas_connection_failed(struct wpa_supplicant *wpa_s, const u8 *bssid)
 
 	switch (count) {
 	case 1:
-	case 2:
-	case 3:
 		timeout = 100;
 		break;
-	case 4:
+	case 2:
 		timeout = 500;
 		break;
-	case 5:
+	case 3:
 		timeout = 1000;
 		break;
 	default:
