@@ -626,6 +626,9 @@ void wpa_supplicant_set_state(struct wpa_supplicant *wpa_s,
 		wpa_supplicant_stop_bgscan(wpa_s);
 #endif /* CONFIG_BGSCAN */
 
+	if (state == WPA_COMPLETED || state == WPA_DISCONNECTED)
+		wpa_supplicant_clear_roaming(wpa_s, 0);
+
 	if (wpa_s->wpa_state != old_state) {
 		wpas_notify_state_changed(wpa_s, wpa_s->wpa_state, old_state);
 

@@ -354,6 +354,12 @@ struct wpa_supplicant {
 	u8 bssid[ETH_ALEN];
 	u8 pending_bssid[ETH_ALEN]; /* If wpa_state == WPA_ASSOCIATING, this
 				     * field contains the targer BSSID. */
+
+	int roaming_in_progress;
+	int ignore_deauth_event;
+	u8 prev_bssid[ETH_ALEN];     /* BSSID being roamed from */
+	struct wpa_ssid *prev_ssid;  /* SSID being roamed from */
+
 	int reassociate; /* reassociation requested */
 	int roaming; /* roaming requested */
 	int disconnected; /* all connections disabled; i.e., do no reassociate
@@ -654,6 +660,9 @@ void ieee80211_sta_free_hw_features(struct hostapd_hw_modes *hw_features,
 void wpas_connection_failed(struct wpa_supplicant *wpa_s, const u8 *bssid);
 
 /* events.c */
+void wpa_supplicant_mark_roaming(struct wpa_supplicant *wpa_s);
+void wpa_supplicant_clear_roaming(struct wpa_supplicant *wpa_s,
+				  int ignore_deauth_event);
 void wpa_supplicant_mark_disassoc(struct wpa_supplicant *wpa_s);
 #ifdef ANDROID_BRCM_P2P_PATCH
 int wpa_supplicant_connect(struct wpa_supplicant *wpa_s,
