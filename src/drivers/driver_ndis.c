@@ -3300,6 +3300,7 @@ const struct wpa_driver_ops wpa_driver_ndis_ops = {
 	NULL /* probe_req_report */,
 	NULL /* disable_11b_rates */,
 	NULL /* deinit_ap */,
+	NULL /* deinit_p2p_cli */
 	NULL /* suspend */,
 	NULL /* resume */,
 	NULL /* signal_monitor */,
