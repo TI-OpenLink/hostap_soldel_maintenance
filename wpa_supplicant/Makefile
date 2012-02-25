@@ -680,6 +680,10 @@ ifdef CONFIG_IEEE80211N
 CFLAGS += -DCONFIG_IEEE80211N
 endif
 
+ifdef CONFIG_ROAMING
+CFLAGS += -DCONFIG_ROAMING
+endif
+
 ifdef NEED_AP_MLME
 OBJS += ../src/ap/beacon.o
 OBJS += ../src/ap/wmm.o
