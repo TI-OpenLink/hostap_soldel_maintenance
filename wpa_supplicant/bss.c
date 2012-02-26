@@ -282,6 +282,11 @@ static void wpa_bss_update(struct wpa_supplicant *wpa_s, struct wpa_bss *bss,
 				  res->ie_len + res->beacon_ie_len);
 			bss->ie_len = res->ie_len;
 			bss->beacon_ie_len = res->beacon_ie_len;
+			if (wpa_s->current_bss == bss) {
+				wpa_dbg(wpa_s, MSG_DEBUG, "BSS: Updating "
+					"wpa_s->current_bss");
+				wpa_s->current_bss = nbss;
+			}
 		}
 		dl_list_add(prev, &bss->list_id);
 	}
