@@ -1731,6 +1731,7 @@ static void handle_assoc_cb(struct hostapd_data *hapd,
 			       "did not acknowledge association response");
 		if (status == WLAN_STATUS_SUCCESS)
 			hostapd_drv_sta_remove(hapd, sta->addr);
+		sta->flags &= ~WLAN_STA_ASSOC_REQ_OK;
 		return;
 	}
 
