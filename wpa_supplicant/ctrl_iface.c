@@ -3360,6 +3360,11 @@ char * wpa_supplicant_ctrl_iface_process(struct wpa_supplicant *wpa_s,
 	} else if (os_strncmp(buf, "P2P_CONNECT ", 12) == 0) {
 		reply_len = p2p_ctrl_connect(wpa_s, buf + 12, reply,
 					     reply_size);
+	} else if (os_strncmp(buf, "P2P_LISTEN", 10) == 0) {
+		wpa_printf(MSG_DEBUG, "WORKAROUND: "
+			   "execute p2p_find instead of p2p_listen");
+		if (p2p_ctrl_find(wpa_s, ""))
+			reply_len = -1;
 	} else if (os_strncmp(buf, "P2P_LISTEN ", 11) == 0) {
 		if (p2p_ctrl_listen(wpa_s, buf + 11))
 			reply_len = -1;
