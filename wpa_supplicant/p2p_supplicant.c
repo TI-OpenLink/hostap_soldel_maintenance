@@ -4068,7 +4068,6 @@ void wpas_p2p_deauth_notif(struct wpa_supplicant *wpa_s, const u8 *bssid,
 	p2p_deauth_notif(wpa_s->global->p2p, bssid, reason_code, ie, ie_len);
 }
 
-#ifdef ANDROID_BRCM_P2P_PATCH
 void wpas_p2p_group_remove_notif(struct wpa_supplicant *wpa_s, u16 reason_code)
 {
 	if(wpa_s->global->p2p_disabled)
@@ -4076,15 +4075,13 @@ void wpas_p2p_group_remove_notif(struct wpa_supplicant *wpa_s, u16 reason_code)
 
 	/* If we are running a P2P Client and we received a Deauth/Disassoc from the Go, then remove 
 	   the virutal interface on which the client is running. */
-	if((wpa_s != wpa_s->parent) && (wpa_s->p2p_group_interface == P2P_GROUP_INTERFACE_CLIENT) && (wpa_s->key_mgmt != WPA_KEY_MGMT_WPS)) {
-
+	if (wpas_p2p_is_client(wpa_s) && (wpa_s->key_mgmt != WPA_KEY_MGMT_WPS)) {
 		wpa_printf(MSG_DEBUG, "P2P: [EVENT_DEAUTH] Removing P2P_CLIENT virtual intf.");
 		wpa_supplicant_cancel_scan(wpa_s);
 		wpa_s->removal_reason = P2P_GROUP_REMOVAL_UNAVAILABLE;
 		wpas_p2p_group_delete(wpa_s);
 	}
 }
-#endif
 
 void wpas_p2p_disassoc_notif(struct wpa_supplicant *wpa_s, const u8 *bssid,
 			     u16 reason_code, const u8 *ie, size_t ie_len)
