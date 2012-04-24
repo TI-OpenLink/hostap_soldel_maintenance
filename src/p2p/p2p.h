@@ -1103,7 +1103,8 @@ void p2p_rx_action(struct p2p_data *p2p, const u8 *da, const u8 *sa,
  * start of a pending operation, e.g., to start a pending GO negotiation.
  */
 int p2p_scan_res_handler(struct p2p_data *p2p, const u8 *bssid, int freq,
-			 int level, const u8 *ies, size_t ies_len);
+			 unsigned int age, int level, const u8 *ies,
+			 size_t ies_len);
 
 /**
  * p2p_scan_res_handled - Indicate end of scan results
@@ -1450,8 +1451,9 @@ void p2p_set_cross_connect(struct p2p_data *p2p, int enabled);
 
 int p2p_get_oper_freq(struct p2p_data *p2p, const u8 *iface_addr);
 
-int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq, int level,
-		   const u8 *ies, size_t ies_len);
+int p2p_add_device(struct p2p_data *p2p, const u8 *addr, int freq,
+		   unsigned int age_ms, int level, const u8 *ies,
+		   size_t ies_len);
 
 /**
  * p2p_set_intra_bss_dist - Set intra BSS distribution
