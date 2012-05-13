@@ -408,6 +408,14 @@ struct wpa_ssid {
 	 * WPS or similar so that they may be exported.
 	 */
 	int export_keys;
+
+	/**
+	 * sched_scanned - ssid was scanned in the latest sched scan
+	 *
+	 * Mark the last sched scanned ssids, so we'll skip them when doing
+	 * normal scans (if there are more ssids than max_sched_scan_ssids)
+	 */
+	int sched_scanned;
 };
 
 #endif /* CONFIG_SSID_H */
