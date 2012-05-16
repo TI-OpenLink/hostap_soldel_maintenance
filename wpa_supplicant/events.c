@@ -2285,7 +2285,7 @@ void wpa_supplicant_event(void *ctx, enum wpa_event_type event,
 	case EVENT_START_ROAMING:
 		if (!is_zero_ether_addr(wpa_s->bssid)) {
 			wpa_s->roaming = 1;
-			bgscan_notify_beacon_loss(wpa_s);
+			wpa_supplicant_req_scan(wpa_s, 0, 0);
 		}
 		break;
 

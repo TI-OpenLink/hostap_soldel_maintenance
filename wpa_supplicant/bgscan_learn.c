@@ -567,14 +567,7 @@ static int bgscan_learn_notify_scan(void *priv,
 static void bgscan_learn_notify_beacon_loss(void *priv)
 {
 	wpa_printf(MSG_DEBUG, "bgscan learn: beacon loss");
-	struct bgscan_learn_data *data = priv;
-
-	data->scan_interval = data->short_interval;
-
-	wpa_printf(MSG_DEBUG, "bgscan learn: Trigger immediate scan");
-	eloop_cancel_timeout(bgscan_learn_timeout, data, NULL);
-	eloop_register_timeout(0, 0, bgscan_learn_timeout, data,
-			       NULL);
+	/* TODO: speed up background scanning */
 }
 
 
