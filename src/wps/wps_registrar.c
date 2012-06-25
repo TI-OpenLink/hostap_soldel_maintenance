@@ -485,12 +485,14 @@ static void wps_set_pushbutton(u16 *methods, u16 conf_methods)
 {
 	*methods |= WPS_CONFIG_PUSHBUTTON;
 #ifdef CONFIG_WPS2
-	if (conf_methods & WPS_CONFIG_VIRT_PUSHBUTTON)
+	if ((conf_methods & WPS_CONFIG_VIRT_PUSHBUTTON) ==
+	    WPS_CONFIG_VIRT_PUSHBUTTON)
 		*methods |= WPS_CONFIG_VIRT_PUSHBUTTON;
-	if (conf_methods & WPS_CONFIG_PHY_PUSHBUTTON)
+	if ((conf_methods & WPS_CONFIG_PHY_PUSHBUTTON) ==
+	    WPS_CONFIG_PHY_PUSHBUTTON)
 		*methods |= WPS_CONFIG_PHY_PUSHBUTTON;
 	if ((*methods & WPS_CONFIG_VIRT_PUSHBUTTON) !=
-	    WPS_CONFIG_VIRT_PUSHBUTTON ||
+	    WPS_CONFIG_VIRT_PUSHBUTTON &&
 	    (*methods & WPS_CONFIG_PHY_PUSHBUTTON) !=
 	    WPS_CONFIG_PHY_PUSHBUTTON) {
 		/*
