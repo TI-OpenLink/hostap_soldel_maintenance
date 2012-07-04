@@ -709,7 +709,7 @@ static void mlme_event_assoc(struct wpa_driver_nl80211_data *drv,
 		event.assoc_info.req_ies_len = len - 24 - sizeof(mgmt->u.assoc_req);
 		event.assoc_info.addr = mgmt->sa;
 	} else {
-#endif	
+#endif
 	if (len < 24 + sizeof(mgmt->u.assoc_resp)) {
 		wpa_printf(MSG_DEBUG, "nl80211: Too short association event "
 			   "frame");
@@ -6895,7 +6895,7 @@ static int wpa_driver_nl80211_probe_req_report(void *priv, int report)
 			   drv->nlmode);
 		goto done;
 	}
-	
+
 	if (nl80211_register_frame(drv, drv->nl_handle_preq,
 			   (WLAN_FC_TYPE_MGMT << 2) |
 			   (WLAN_FC_STYPE_ASSOC_REQ << 4),
@@ -6916,7 +6916,7 @@ static int wpa_driver_nl80211_probe_req_report(void *priv, int report)
 			   NULL, 0) < 0) {
 		goto out_err3;
 	}
-	
+
 	if (nl80211_register_frame(drv, drv->nl_handle_preq,
 					   (WLAN_FC_TYPE_MGMT << 2) |
 					   (WLAN_FC_STYPE_DEAUTH << 4),
@@ -7260,7 +7260,7 @@ struct rx_filter {
 	 */
 	u8 pattern[MAX_PATTERN_SIZE];
 
-	/* pattern_len - The number of bytes used in pattern */	
+	/* pattern_len - The number of bytes used in pattern */
 	u8 pattern_len;
 
 	/* mask - A bit mask indicating which bytes in pattern should be
