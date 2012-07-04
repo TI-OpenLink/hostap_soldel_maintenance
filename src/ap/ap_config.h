@@ -133,14 +133,6 @@ struct hostapd_tx_queue_params {
 	int burst; /* maximum burst time in 0.1 ms, i.e., 10 = 1 ms */
 };
 
-struct hostapd_wmm_ac_params {
-	int cwmin;
-	int cwmax;
-	int aifs;
-	int txop_limit; /* in units of 32us */
-	int admission_control_mandatory;
-};
-
 
 /**
  * struct hostapd_bss_config - Per-BSS configuration
@@ -387,7 +379,7 @@ struct hostapd_config {
 	 * 2 = VI (video)
 	 * 3 = VO (voice)
 	 */
-	struct hostapd_wmm_ac_params wmm_ac_params[4];
+	struct wpa_wmm_ac_params wmm_ac_params[4];
 
 	int ht_op_mode_fixed;
 	u16 ht_capab;

@@ -36,7 +36,7 @@
 
 #include "config_ssid.h"
 #include "wps/wps.h"
-
+#include "common/wpa_common.h"
 
 #define CFG_CHANGED_DEVICE_NAME BIT(0)
 #define CFG_CHANGED_CONFIG_METHODS BIT(1)
@@ -366,6 +366,7 @@ struct wpa_config {
 	char *p2p_ssid_postfix;
 	int persistent_reconnect;
 	int p2p_intra_bss;
+	struct wpa_wmm_ac_params wmm_ac_params[4];
 
 #define MAX_WPS_VENDOR_EXT 10
 	/**
