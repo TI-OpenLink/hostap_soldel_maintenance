@@ -373,7 +373,7 @@ void ap_handle_timer(void *eloop_ctx, void *timeout_ctx)
 				       hapd, sta);
 		break;
 	case STA_DISASSOC:
-		sta->flags &= ~WLAN_STA_ASSOC;
+		sta->flags &= ~(WLAN_STA_ASSOC | WLAN_STA_ASSOC_REQ_OK);
 		ieee802_1x_notify_port_enabled(sta->eapol_sm, 0);
 		if (!sta->acct_terminate_cause)
 			sta->acct_terminate_cause =
@@ -530,7 +530,7 @@ void ap_sta_disassociate(struct hostapd_data *hapd, struct sta_info *sta,
 {
 	wpa_printf(MSG_DEBUG, "%s: disassociate STA " MACSTR,
 		   hapd->conf->iface, MAC2STR(sta->addr));
-	sta->flags &= ~WLAN_STA_ASSOC;
+	sta->flags &= ~(WLAN_STA_ASSOC | WLAN_STA_ASSOC_REQ_OK);
 	ap_sta_remove(hapd, sta);
 	sta->timeout_next = STA_DEAUTH;
 	eloop_cancel_timeout(ap_handle_timer, hapd, sta);
@@ -548,7 +548,7 @@ void ap_sta_deauthenticate(struct hostapd_data *hapd, struct sta_info *sta,
 {
 	wpa_printf(MSG_DEBUG, "%s: deauthenticate STA " MACSTR,
 		   hapd->conf->iface, MAC2STR(sta->addr));
-	sta->flags &= ~(WLAN_STA_AUTH | WLAN_STA_ASSOC);
+    sta->flags &= ~(WLAN_STA_AUTH | WLAN_STA_ASSOC | WLAN_STA_ASSOC_REQ_OK);
 	ap_sta_remove(hapd, sta);
 	sta->timeout_next = STA_REMOVE;
 	eloop_cancel_timeout(ap_handle_timer, hapd, sta);
@@ -789,7 +789,7 @@ void ap_sta_disconnect(struct hostapd_data *hapd, struct sta_info *sta,
 	if (sta == NULL)
 		return;
 	ap_sta_set_authorized(hapd, sta, 0);
-	sta->flags &= ~(WLAN_STA_AUTH | WLAN_STA_ASSOC);
+    sta->flags &= ~(WLAN_STA_AUTH | WLAN_STA_ASSOC | WLAN_STA_ASSOC_REQ_OK);
 	eloop_cancel_timeout(ap_handle_timer, hapd, sta);
 	eloop_register_timeout(0, 0, ap_handle_timer, hapd, sta);
 	sta->timeout_next = STA_REMOVE;

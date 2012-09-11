@@ -224,7 +224,8 @@ void hostapd_notif_disassoc(struct hostapd_data *hapd, const u8 *addr)
 		return;
 	}
 
-	sta->flags &= ~(WLAN_STA_AUTH | WLAN_STA_ASSOC);
+    sta->flags &= ~(WLAN_STA_AUTH | WLAN_STA_ASSOC | WLAN_STA_ASSOC_REQ_OK);
+
 	wpa_msg(hapd->msg_ctx, MSG_INFO, AP_STA_DISCONNECTED MACSTR,
 		MAC2STR(sta->addr));
 #ifdef ANDROID_BRCM_P2P_PATCH
